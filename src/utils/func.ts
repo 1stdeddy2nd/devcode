@@ -1,30 +1,36 @@
-// work same with curdate() at MySQL
-import {Response} from "express";
-import {connection} from "../config/mysql";
+import {Response, Request} from "express";
+import {validationResult} from "express-validator";
+import * as http from "http";
+import * as https from "https";
 
-const currentDate: string = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-// handle result after query
-const handleResult = (res: Response, err: string | undefined, data: any, resStatus?: number, statusMsg?: string) => {
-    if(err) {
-        return res.status(resStatus ?? 500).json({
-            status: statusMsg ?? "Error",
-            message: err,
-            data: {}
-        });
-    }
-    return res.status(resStatus ?? 200).json({
-        status: statusMsg ?? "Success",
-        message: "Success",
+// handle result for each API
+const handleResult = (res: Response, code: number, status: string, message: any, data: any) => {
+    return res.status(code).json({
+        status: status,
+        message: message,
         data: data
     });
 }
 
-// connection error auto rollback
-const handleRollBackCon = (res: Response, errMsg: string) => {
-    return connection.rollback(function(){
-        return handleResult(res, errMsg, {})
-    })
+// controller success get data
+const handleSuccessController = (res: Response, data: any) => {
+    return handleResult(res, 200, 'Success', 'Success', data);
 }
 
-export {currentDate, handleResult, handleRollBackCon}
+// controller catcher error by code handler
+const handleErrorController = (res: Response, e: {message:string, code?:number}) => {
+    const status = ():string => {
+        if(e.code === 403) return 'Bad Request'
+        if(e.code === 404) return 'Not Found'
+        return 'Error'
+    }
+    return handleResult(res, e.code ?? 500, status(), e.message, {});
+}
+
+// handle body validation
+const handleValidationBody = (req: Request) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw ({message: errors.array(), code: 403})
+}
+
+export {handleResult, handleValidationBody, handleErrorController, handleSuccessController}
