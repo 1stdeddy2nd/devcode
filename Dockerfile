@@ -4,6 +4,8 @@ COPY . .
 
 RUN npm install
 
-CMD ["node", "src/app.ts"]
+RUN npm install -g nodemon
+
+CMD ["npm", "start"]
 
 EXPOSE 3030
