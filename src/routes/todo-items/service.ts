@@ -34,6 +34,9 @@ const create = async (req: Request, title: string, activity_group_id: number): P
             priority: 'very-high'
         }
     })
+        .catch((e: Error) => {
+            throw ({message: e.message, code: 403})
+        })
 }
 
 const update = async (req: Request, res: Response, id: number, title?: string): Promise<TodoItem> => {
@@ -48,6 +51,9 @@ const update = async (req: Request, res: Response, id: number, title?: string): 
             updated_at: new Date()
         }
     })
+        .catch((e: Error) => {
+            throw ({message: e.message, code: 403})
+        })
 }
 
 export const todoItemsService = {getById, getAll, getAllByActivityGroupId, deleteById, update, create};

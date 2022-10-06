@@ -8,7 +8,7 @@ app.use(express.json());
 
 prisma.$connect()
     .then(() => console.log('Connected to the MySQL Server.'))
-    .catch((err) => console.error('Error: ', err.message))
+    .catch((err: any) => console.error('Error: ', err.message))
 
 app.use('/todo-items', todoCon);
 app.use('/activity-groups', activityCon);

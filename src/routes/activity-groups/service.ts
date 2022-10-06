@@ -32,7 +32,7 @@ const create = async (req: Request, title: string, email: string): Promise<any> 
             deleted_at: null
         }
     })
-        .catch((e) => {
+        .catch((e: Error) => {
             throw ({message: e.message, code: 403})
         })
 }
@@ -50,7 +50,7 @@ const update = async (req: Request, res: Response, id: number, title?: string, e
             updated_at: new Date()
         }
     })
-        .catch((e) => {
+        .catch((e: Error) => {
             throw ({message: e.message, code: 403})
         })
 }
