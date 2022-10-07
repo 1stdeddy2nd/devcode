@@ -4,29 +4,29 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = ""
+  url      = env("DATABASE_URL")
 }
 
-model activity_group {
+model activities {
   id         Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
   email      String    @unique(map: "email_UNIQUE") @db.VarChar(250)
   title      String    @db.VarChar(250)
   created_at DateTime  @db.DateTime(0)
   updated_at DateTime  @db.DateTime(0)
   deleted_at DateTime? @db.DateTime(0)
-  todo       todo[]
+  todos      todos[]
 }
 
-model todo {
-  id                Int            @unique(map: "id_UNIQUE") @default(autoincrement())
-  title             String         @db.VarChar(250)
+model todos {
+  id                Int        @unique(map: "id_UNIQUE") @default(autoincrement())
+  title             String     @db.VarChar(250)
   is_active         Int
-  priority          String         @db.VarChar(45)
-  created_at        DateTime       @db.DateTime(0)
-  updated_at        DateTime       @db.DateTime(0)
-  deleted_at        DateTime?      @db.DateTime(0)
+  priority          String     @db.VarChar(45)
+  created_at        DateTime   @db.DateTime(0)
+  updated_at        DateTime   @db.DateTime(0)
+  deleted_at        DateTime?  @db.DateTime(0)
   activity_group_id Int
-  activity_group    activity_group @relation(fields: [activity_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_todo_activity_group")
+  activities        activities @relation(fields: [activity_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_todo_activity_group")
 
   @@id([id, activity_group_id])
   @@index([activity_group_id], map: "fk_todo_activity_group_idx")

@@ -4,27 +4,27 @@ import {Response, Request} from "express";
 import {handleValidationBody} from "../../utils/func";
 
 const getById = async (res: Response, id: number) => {
-    const todos = await prisma.$queryRaw<TodoItem []>`SELECT * FROM todo WHERE id = ${id}`;
+    const todos = await prisma.$queryRaw<TodoItem []>`SELECT * FROM todos WHERE id = ${id}`;
     if(!todos.length) throw new Error(`Todo item with ID ${id} Not Found`);
     return todos[0];
 }
 
 const getAll = async ():Promise<TodoItem []> => {
-    return await prisma.$queryRaw<TodoItem []>`SELECT * FROM todo`;
+    return await prisma.$queryRaw<TodoItem []>`SELECT * FROM todos`;
 }
 
 const getAllByActivityGroupId = async(activityGroupId: number): Promise<TodoItem []> => {
-    return await prisma.$queryRaw<TodoItem []>`SELECT * FROM todo WHERE activity_group_id = ${activityGroupId}`;
+    return await prisma.$queryRaw<TodoItem []>`SELECT * FROM todos WHERE activity_group_id = ${activityGroupId}`;
 }
 
 const deleteById = async (res: Response, id: number): Promise<any> => {
     await getById(res, id);
-    return await prisma.$queryRaw`DELETE FROM todo WHERE id = ${id}`;
+    return await prisma.$queryRaw`DELETE FROM todos WHERE id = ${id}`;
 }
 
 const create = async (req: Request, title: string, activity_group_id: number): Promise<TodoItem> => {
     handleValidationBody(req);
-    return await prisma.todo.create({
+    return await prisma.todos.create({
         data: {
             title: title,
             activity_group_id: activity_group_id,
@@ -42,7 +42,7 @@ const create = async (req: Request, title: string, activity_group_id: number): P
 const update = async (req: Request, res: Response, id: number, title?: string): Promise<TodoItem> => {
     handleValidationBody(req);
     await getById(res, id)
-    return await prisma.todo.update({
+    return await prisma.todos.update({
         where: {
             id: id
         },
